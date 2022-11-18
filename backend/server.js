@@ -12,7 +12,7 @@ app.get('/api/products/slug/:slug', (req, res) => {
   if (product) {
     res.send(product);
   } else {
-    res.status(400).send({ message: 'product Not Found' });
+    res.status(400).send({ message: 'Product Not Found' });
   }
 });
 
