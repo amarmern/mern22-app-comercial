@@ -12,6 +12,11 @@ body {
 main {
   flex: 1;
 }
+.btn-primary {
+  background-color: #f0c040;
+  color: black;
+  border: white;
+}
 
 /* header {
   background-color: #404040;
@@ -42,4 +47,7 @@ header a {
 
 .product-info {
   padding: 1rem;
+}
+.rating span {
+  color: #ffc000;
 }
