@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import seedRouter from './routes/seedRoutes.js';
 import productRouter from './routes/productRoutes.js';
 import userRouter from './routes/userRoutes.js';
+import orderRouter from './routes/orderRoutes.js';
 
 dotenv.config();
 
@@ -27,6 +28,8 @@ app.use('/api/seed', seedRouter);
 app.use('/api/products', productRouter);
 
 app.use('/api/users', userRouter);
+
+app.use('/api/orders', orderRouter);
 
 //if any error cought by express asyc handler then it will be handle by below middle ware.
 
