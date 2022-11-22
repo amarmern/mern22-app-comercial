@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useContext, useEffect, useReducer } from 'react';
+import React, { useContext, useEffect, useReducer, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate, useParams } from 'react-router-dom';
 import Row from 'react-bootstrap/Row';
@@ -11,6 +11,9 @@ import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
 import { Store } from '../Store';
 import { getError } from '../utils';
+
+import { loadStripe } from '@stripe/stripe-js/pure';
+import StripeCheckout from '../components/StripeCheckout';
 
 function reducer(state, action) {
   switch (action.type) {
@@ -40,6 +43,21 @@ export default function OrderScreen() {
   const { id: orderId } = params;
   const navigate = useNavigate();
 
+  const [stripe, setStripe] = useState(null);
+
+  useEffect(() => {
+    const addStripeScript = async () => {
+      const { data: clientId } = await axios.get('/api/stripe/key');
+      const stripeObj = await loadStripe(clientId);
+      setStripe(stripeObj);
+    };
+    if (order.paymentMethod === 'stripe') {
+      if (!stripe) {
+        addStripeScript();
+      }
+    }
+  }, [order, stripe]);
+
   useEffect(() => {
     const fetchOrder = async () => {
       try {
@@ -59,6 +77,10 @@ export default function OrderScreen() {
       fetchOrder();
     }
   }, [order, userInfo, orderId, navigate]);
+
+  const handleSuccessPayment = (e) => {
+    alert('Payment success');
+  };
 
   return loading ? (
     <LoadingBox></LoadingBox>
@@ -165,6 +187,14 @@ export default function OrderScreen() {
                     </Col>
                   </Row>
                 </ListGroup.Item>
+                {!order.isPaid && !stripe && <LoadingBox />}
+                {!order.isPaid && stripe && (
+                  <StripeCheckout
+                    stripe={stripe}
+                    orderId={order._id}
+                    handleSuccessPayment={handleSuccessPayment}
+                  />
+                )}
               </ListGroup>
             </Card.Body>
           </Card>
